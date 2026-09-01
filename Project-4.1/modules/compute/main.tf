@@ -28,6 +28,27 @@ resource "aws_instance" "public-EC2-Instance" {
     instance_type = var.public-instance_type
   }
 
+  user_data_replace_on_change = true
+  user_data                   = <<-EOF
+#!/bin/bash
+set -e
+
+# Update and install Docker
+apt-get update -y
+apt-get install -y docker.io
+
+# Start and enable Docker
+systemctl start docker
+systemctl enable docker
+
+# Add ubuntu user to docker group
+usermod -aG docker ubuntu
+
+# Pull and run the frontend React container
+docker run -d --name frontend --restart always --add-host backend-service:127.0.0.1 -p 80:80 akhilkumar119/react-frontend:latest
+
+EOF
+
   lifecycle {
     ignore_changes = [ami]
   }
