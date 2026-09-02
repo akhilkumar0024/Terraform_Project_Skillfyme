@@ -53,3 +53,40 @@ EOF
     ignore_changes = [ami]
   }
 }
+
+# 2nd EC2 instance 
+resource "aws_instance" "public-EC2-Instance-2" {
+  ami                         = data.aws_ami.ubuntu.id
+  instance_type               = var.public-instance_type
+  key_name                    = "ec2-key-pair"
+  subnet_id                   = var.subnet_id
+  vpc_security_group_ids      = var.security_group_ids
+  associate_public_ip_address = true
+
+  tags = {
+    Name          = var.public-instance_name
+    instance_type = var.public-instance_type
+  }
+
+  user_data_replace_on_change = true
+  user_data                   = <<-EOF
+#!/bin/bash
+set -e
+
+#install nginx
+apt-get update -y
+apt-get install -y nginx
+
+systemctl start nginx
+systemctl restart nginx
+
+#serve a webpage 
+echo "<h1>This is the Second EC2 machine</h1>" | sudo tee -a /var/www/html/index.html
+
+
+EOF
+
+  lifecycle {
+    ignore_changes = [ami]
+  }
+}

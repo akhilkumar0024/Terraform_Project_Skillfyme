@@ -1,6 +1,11 @@
-output "ec2_public_ip" {
+output "ec2_public_ip-1" {
   description = "Public IP address of the EC2 instance"
   value       = module.compute.application_address
+}
+
+output "ec2_public_ip-2" {
+  description = "Public IP address of 2nd EC2 instance"
+  value       = module.compute.public-ip-2
 }
 
 output "ec2_instance_id" {
