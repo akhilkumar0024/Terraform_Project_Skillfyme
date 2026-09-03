@@ -24,7 +24,8 @@ resource "aws_instance" "public-EC2-Instance" {
   associate_public_ip_address = true
 
   tags = {
-    Name          = var.public-instance_name
+    Name          = "${var.public-instance_name}-frontend-${var.environment}"
+    Environment   = var.environment
     instance_type = var.public-instance_type
   }
 
@@ -64,7 +65,8 @@ resource "aws_instance" "public-EC2-Instance-2" {
   associate_public_ip_address = true
 
   tags = {
-    Name          = var.public-instance_name
+    Name          = "${var.public-instance_name}-nginx-${var.environment}"
+    Environment   = var.environment
     instance_type = var.public-instance_type
   }
 

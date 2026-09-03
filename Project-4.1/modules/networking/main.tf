@@ -1,23 +1,23 @@
 # main VPC
 resource "aws_vpc" "main" {
-  cidr_block           = "10.0.0.0/16"
+  cidr_block           = var.vpc_cidr
   instance_tenancy     = "default"
   enable_dns_hostnames = true
   enable_dns_support   = true
 
   tags = {
-    Name = "main"
+    Name = "main-${var.environment}"
   }
 }
 
 # Public Subnet
 resource "aws_subnet" "public-subnet" {
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.1.0/24"
+  cidr_block              = var.subnet_cidr
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "public-subnet"
+    Name = "public-subnet-${var.environment}"
   }
 }
 
@@ -26,7 +26,7 @@ resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "IGW-main-VPC"
+    Name = "IGW-main-VPC-${var.environment}"
   }
 }
 
@@ -40,19 +40,19 @@ resource "aws_route_table" "example" {
   }
 
   tags = {
-    Name = "public-route-table"
+    Name = "public-route-table-${var.environment}"
   }
 }
 
 # Associating the route table with the public subnet
-resource "aws_route_table_association" "example" {
+resource "aws_route_table_association" "publicsubnet-rt-association" {
   subnet_id      = aws_subnet.public-subnet.id
   route_table_id = aws_route_table.example.id
 }
 
 # Security Group
 resource "aws_security_group" "vpc-main-sg" {
-  name        = "vpc-main-sg"
+  name        = "vpc-main-sg-${var.environment}"
   description = "Allow SSH and HTTP traffic"
   vpc_id      = aws_vpc.main.id
 
@@ -81,6 +81,6 @@ resource "aws_security_group" "vpc-main-sg" {
   }
 
   tags = {
-    Name = "vpc-main-sg"
+    Name = "vpc-main-sg-${var.environment}"
   }
 }
