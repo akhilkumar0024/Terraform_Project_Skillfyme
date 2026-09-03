@@ -12,8 +12,9 @@ provider "aws" {
   region = "ap-south-1" # Mumbai
   default_tags {
     tags = {
-      created_by = "Akhil"
-      project    = "Project-4.1"
+      created_by  = "Akhil"
+      project     = "Project-4.2"
+      Environment = terraform.workspace
     }
   }
 }
