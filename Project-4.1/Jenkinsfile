@@ -39,6 +39,15 @@ pipeline {
                 }
             }
         }
+        stage('Terraform Destroy') {
+            steps {
+                dir('Project-4.1') {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS -ACCESS-KEY']]) {
+                        sh 'terraform destroy -auto-approve'
+                    }
+                }
+            }
+        }
     }
 
     post {
