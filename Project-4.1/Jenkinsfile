@@ -4,25 +4,39 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                checkout scmGit(
+                    branches: [[name: '*/Project-4.3']],
+                    extensions: [],
+                    userRemoteConfigs: [[url: 'https://github.com/akhilkumar0024/Terraform_Project_Skillfyme.git']]
+                )
             }
         }
 
         stage('Terraform Initialization') {
             steps {
-                sh 'terraform init'
+                dir('Project-4.1') {
+                    sh 'terraform init'
+                }
             }
         }
 
         stage('Terraform Plan') {
             steps {
-                sh 'terraform plan -out tfplan'
+                dir('Project-4.1') {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS -ACCESS-KEY']]) {
+                        sh 'terraform plan -out tfplan'
+                    }
+                }
             }
         }
 
         stage('Terraform Apply') {
             steps {
-                sh 'terraform apply tfplan'
+                dir('Project-4.1') {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS -ACCESS-KEY']]) {
+                        sh 'terraform apply tfplan'
+                    }
+                }
             }
         }
     }
