@@ -18,7 +18,7 @@ locals {
   instance_types = {
     default = "t3.small"
     dev     = "t3.small"
-    staging = "t3.small"
+    staging = "t3.medium"
     prod    = "t3.medium"
   }
 }
