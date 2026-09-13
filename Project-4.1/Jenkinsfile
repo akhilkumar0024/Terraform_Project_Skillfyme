@@ -40,10 +40,23 @@ pipeline {
             }
         }
         stage('Terraform Destroy') {
+            input {
+                message 'Are you sure you want to destroy the resources?'
+                ok 'Submit'
+                parameters {
+                    choice(name: 'DESTROY_CHOICE', choices: ['yes', 'no'], description: 'Select "yes" to destroy resources or "no" to exit without destroying')
+                }
+            }
             steps {
-                dir('Project-4.1') {
-                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS -ACCESS-KEY']]) {
-                        sh 'terraform destroy -auto-approve'
+                script {
+                    if (env.DESTROY_CHOICE == 'yes') {
+                        dir('Project-4.1') {
+                            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS -ACCESS-KEY']]) {
+                                sh 'terraform destroy -auto-approve'
+                            }
+                        }
+                    } else {
+                        echo 'Exiting pipeline without destroying resources.'
                     }
                 }
             }
